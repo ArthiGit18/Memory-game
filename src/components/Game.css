@@ -1,0 +1,10 @@
+ /* src/components/Game.css */
+ .game-container {
+    text-align: center;
+  }
+  
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 100px);
+    gap: 10px;
+  }
