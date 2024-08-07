@@ -1,16 +1,6 @@
-// src/components/Game.js
 import React, { useState, useEffect } from 'react';
 import Card from './Card';
 import './Game.css';
-
-// Generate a shuffled array of cards
-const generateCards = (images) => {
-  const cardArray = images.flatMap(image => [
-    { id: image + '1', image },
-    { id: image + '2', image },
-  ]);
-  return cardArray.sort(() => Math.random() - 0.5);
-};
 
 const Game = () => {
   const [cards, setCards] = useState([]);
@@ -18,11 +8,21 @@ const Game = () => {
   const [matchedIndices, setMatchedIndices] = useState([]);
   const [score, setScore] = useState(0);
 
-  const images = Array.from({ length: 25 }, (_, i) => `/images/image${i + 1}.jpg`);
-
   useEffect(() => {
-    setCards(generateCards(images));
+    fetch('/Card.json')
+      .then(response => response.json())
+      .then(data => {
+        setCards(generateCards(data));
+      });
   }, []);
+
+  const generateCards = (images) => {
+    const cardArray = images.flatMap(image => [
+      { id: image.id + '1', image: image.image },
+      { id: image.id + '2', image: image.image },
+    ]);
+    return cardArray.sort(() => Math.random() - 0.5);
+  };
 
   useEffect(() => {
     if (flippedIndices.length === 2) {
