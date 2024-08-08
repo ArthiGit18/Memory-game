@@ -1,10 +1,120 @@
- /* src/components/Game.css */
- .game-container {
-    text-align: center;
+/* src/components/Game.css */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .background-container {
+    position: relative;
+    min-height: 100vh; /* Ensure the background covers the entire viewport height */
+    overflow: hidden;
+  }
+  
+  .background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Make sure the image covers the container without distortion */
+    z-index: -1; /* Ensure the background image is behind the game content */
+  }
+  
+  .game-container {
+    position: relative;
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    z-index: 1; /* Ensure the game container is above the background */
   }
   
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(10, 100px);
+    grid-template-columns: repeat(5, 1fr);
     gap: 10px;
+    margin-top: 20px;
   }
+  
+  .card {
+    width: 100px;
+    height: 100px;
+    perspective: 1000px;
+    position: relative;
+  }
+  
+  .card-front,
+  .card-back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    backface-visibility: hidden;
+  }
+  
+  .card-front {
+    background-color: #eee;
+  }
+  
+  .card-back {
+    background-color: #fff;
+    transform: rotateY(180deg);
+  }
+  
+  .card.flipped .card-back {
+    transform: rotateY(0deg);
+  }
+  
+  .card.flipped .card-front {
+    transform: rotateY(-180deg);
+  }
+  
+  .card-back img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .game-over-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+  }
+  
+  .game-over-popup h2 {
+    margin-bottom: 10px;
+  }
+  
+  .game-over-popup p {
+    margin-bottom: 10px;
+  }
+  
+  .game-over-popup img {
+    width: 500px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+  
+  .game-over-popup button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .game-over-popup button:hover {
+    background-color: #45a049;
+  }
+  

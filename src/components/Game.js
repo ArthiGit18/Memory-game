@@ -1,3 +1,4 @@
+// src/components/Game.js
 import React, { useState, useEffect } from 'react';
 import Card from './Card';
 import './Game.css';
@@ -7,22 +8,18 @@ const Game = () => {
   const [flippedIndices, setFlippedIndices] = useState([]);
   const [matchedIndices, setMatchedIndices] = useState([]);
   const [score, setScore] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
     fetch('/Card.json')
       .then(response => response.json())
       .then(data => {
         setCards(generateCards(data));
+      })
+      .catch(error => {
+        console.error('Error fetching card data:', error);
       });
   }, []);
-
-  const generateCards = (images) => {
-    const cardArray = images.flatMap(image => [
-      { id: image.id + '1', image: image.image },
-      { id: image.id + '2', image: image.image },
-    ]);
-    return cardArray.sort(() => Math.random() - 0.5);
-  };
 
   useEffect(() => {
     if (flippedIndices.length === 2) {
@@ -40,25 +37,73 @@ const Game = () => {
     }
   }, [flippedIndices, cards]);
 
+  useEffect(() => {
+    if (matchedIndices.length === cards.length) {
+      setGameOver(true);
+    }
+  }, [matchedIndices, cards]);
+
   const handleCardClick = (index) => {
-    if (flippedIndices.length === 2 || flippedIndices.includes(index) || matchedIndices.includes(index)) return;
+    if (flippedIndices.length === 2 || flippedIndices.includes(index) || matchedIndices.includes(index) || gameOver) return;
     
     setFlippedIndices(prev => [...prev, index]);
   };
 
+  const handleTryAgain = () => {
+    fetch('/Card.json')
+      .then(response => response.json())
+      .then(data => {
+        setCards(generateCards(data));
+        setFlippedIndices([]);
+        setMatchedIndices([]);
+        setScore(0);
+        setGameOver(false);
+      })
+      .catch(error => {
+        console.error('Error fetching card data:', error);
+      });
+  };
+
+  const generateCards = (images) => {
+    const cardArray = images.flatMap(image => [
+      { id: image.id + '1', image: image.image },
+      { id: image.id + '2', image: image.image },
+    ]);
+    return cardArray.sort(() => Math.random() - 0.5).slice(0, 30);
+  };
+
   return (
-    <div className="game-container">
-      <div className="score">Score: {score}</div>
-      <div className="card-grid">
-        {cards.map((card, index) => (
-          <Card
-            key={card.id}
-            card={card}
-            id={index}
-            onClick={handleCardClick}
-            isFlipped={flippedIndices.includes(index) || matchedIndices.includes(index)}
-          />
-        ))}
+    <div className="background-container">
+      <img className="background-image" src="/background/7.jpeg" alt="background" />
+      <div className="game-container">
+        {!gameOver && (
+          <>
+            <div className="score">Score: {score}</div>
+            <div className="card-grid">
+              {cards.length === 0 ? (
+                <p>Loading...</p>
+              ) : (
+                cards.map((card, index) => (
+                  <Card
+                    key={card.id}
+                    card={card}
+                    id={index}
+                    onClick={handleCardClick}
+                    isFlipped={flippedIndices.includes(index) || matchedIndices.includes(index)}
+                  />
+                ))
+              )}
+            </div>
+          </>
+        )}
+        {gameOver && (
+          <div className="game-over-popup">
+            <h2>Hello Buddy !</h2>
+            <p>Please try </p>
+            <img src="/assets/robot.gif" alt="robot" />
+            <button onClick={handleTryAgain}>Play</button>
+          </div>
+        )}
       </div>
     </div>
   );
